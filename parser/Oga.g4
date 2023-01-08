@@ -6,11 +6,17 @@ varDecl: MAKE IDENTIFIER (ASSIGN expr)?;
 
 funcDecl: FUNC IDENTIFIER '(' exprList? ')' block;
 
-stmtList: EOS | (stmt EOS)+;
+stmtList: (stmt EOS)+;
 
-stmt: varDecl | ifStmt | returnStmt | expressionStmt | forStmt;
+stmt:
+	varDecl
+	| ifStmt
+	| returnStmt
+	| expressionStmt
+	| forStmt
+	| assignStmt;
 
-block: '{' stmtList? '}';
+block: '{' EOS* stmtList? '}';
 
 ifStmt: IF condition block (ELSE (ifStmt | block))?;
 
@@ -67,5 +73,5 @@ LINE_COMMENT: '//' ~[\r\n]* EOS -> skip;
 
 // Whitespace
 EOS: [\r\n]+;
-WS: [ \t\n\r]+ -> skip;
+WS: [ \t]+ -> skip;
 
