@@ -20,6 +20,10 @@ func (v *BaseOgaVisitor) VisitFuncDecl(ctx *FuncDeclContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
+func (v *BaseOgaVisitor) VisitIdentifierList(ctx *IdentifierListContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BaseOgaVisitor) VisitStmtList(ctx *StmtListContext) interface{} {
 	return v.VisitChildren(ctx)
 }
@@ -73,6 +77,10 @@ func (v *BaseOgaVisitor) VisitIDExpr(ctx *IDExprContext) interface{} {
 }
 
 func (v *BaseOgaVisitor) VisitRelExpr(ctx *RelExprContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseOgaVisitor) VisitStrExpr(ctx *StrExprContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 

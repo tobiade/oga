@@ -17,6 +17,9 @@ type OgaVisitor interface {
 	// Visit a parse tree produced by OgaParser#funcDecl.
 	VisitFuncDecl(ctx *FuncDeclContext) interface{}
 
+	// Visit a parse tree produced by OgaParser#identifierList.
+	VisitIdentifierList(ctx *IdentifierListContext) interface{}
+
 	// Visit a parse tree produced by OgaParser#stmtList.
 	VisitStmtList(ctx *StmtListContext) interface{}
 
@@ -58,6 +61,9 @@ type OgaVisitor interface {
 
 	// Visit a parse tree produced by OgaParser#RelExpr.
 	VisitRelExpr(ctx *RelExprContext) interface{}
+
+	// Visit a parse tree produced by OgaParser#StrExpr.
+	VisitStrExpr(ctx *StrExprContext) interface{}
 
 	// Visit a parse tree produced by OgaParser#NestedExpr.
 	VisitNestedExpr(ctx *NestedExprContext) interface{}

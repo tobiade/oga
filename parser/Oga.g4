@@ -4,9 +4,11 @@ sourceFile: ((funcDecl | varDecl) EOS)* EOF;
 
 varDecl: MAKE IDENTIFIER (ASSIGN expr)?;
 
-funcDecl: FUNC IDENTIFIER '(' exprList? ')' block;
+funcDecl: FUNC IDENTIFIER '(' identifierList? ')' block;
 
-stmtList: (stmt EOS)+;
+identifierList: IDENTIFIER (COMMA IDENTIFIER)*;
+
+stmtList: (stmt EOS+)+;
 
 stmt:
 	varDecl
@@ -39,10 +41,11 @@ expr:
 	| expr ('+' | '-') expr			# AddSubExpr
 	| expr relOp expr				# RelExpr
 	| INT							# IntExpr
+	| STR							# StrExpr
 	| IDENTIFIER					# IDExpr
 	| '(' expr ')'					# NestedExpr;
 
-exprList: expr (',' expr)*;
+exprList: expr (COMMA expr)*;
 
 // Keywords
 MAKE: 'make';
@@ -61,9 +64,12 @@ NOT_EQUAL: 'no resemble';
 // Punctuation
 SEMI: ';';
 ASSIGN: '=';
+COMMA: ',';
 
-// Num literals
+// Literals
 INT: '0' | [1-9] [0-9]*;
+STR: '"' (ESC | .)*? '"';
+fragment ESC: '\\"' | '\\\\';
 
 // Identifier
 IDENTIFIER: [a-zA-Z0-9]+;

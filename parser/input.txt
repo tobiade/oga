@@ -1,14 +1,13 @@
-// example used for testing Oga parser
 funke dostuff(){
 
     
-    suppose say x small pass 5 {
-
-    } otherwise suppose say z resemble 4 {
-
-    }
-
-    make x = 4
-}
+		suppose say x small pass 5 {
+	
+		} otherwise suppose say z resemble 4 {
+	
+		}
+	
+		make x = 4
+	}
 
 
