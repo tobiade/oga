@@ -27,7 +27,9 @@ returnStmt: RETURN expr;
 assignStmt: IDENTIFIER ASSIGN expr;
 
 forStmt:
-	FOR (assignStmt? SEMI condition? SEMI assignStmt?)? block;
+	FOR (
+		(varDecl | assignStmt)? SEMI condition? SEMI assignStmt?
+	)? block;
 
 condition: expr relOp expr;
 
