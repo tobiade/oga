@@ -9,16 +9,9 @@ import (
 )
 
 func main() {
-	code := `funke dostuff(){
+	code := `funke mehn(){
 
-		make x = 4
-
-		suppose say x small pass 5 {
-			
-		} otherwise suppose say z resemble 4 {
-	
-		}
-	
+		make x = 4*5
 		
 	}
 	`
@@ -46,5 +39,16 @@ func main() {
 	for _, e := range resV.Errors {
 		fmt.Println(e)
 	}
+
+	globalMem := sem.MemorySpace{}
+	stack := []sem.MemorySpace{globalMem}
+	interpreter := &sem.Interpreter{
+		BaseOgaVisitor: &parser.BaseOgaVisitor{},
+		Stack:          stack,
+		NodeMetadata:   resV.NodeMetadata,
+	}
+
+	defV.MainFunc.Accept(interpreter)
+	fmt.Println(interpreter.Stack[0])
 
 }

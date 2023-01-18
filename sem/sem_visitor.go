@@ -11,6 +11,7 @@ import (
 type ScopeDefineVisitor struct {
 	*parser.BaseOgaVisitor
 	CurrentScope Scope
+	MainFunc     antlr.ParserRuleContext
 	NodeMetadata map[antlr.ParserRuleContext]Metadata
 }
 
@@ -52,9 +53,17 @@ func (v *ScopeDefineVisitor) VisitFuncDecl(ctx *parser.FuncDeclContext) interfac
 	v.CurrentScope = &funcScope
 
 	if ctx.IdentifierList() != nil {
-		ctx.IdentifierList().Accept(v)
+		symbols := ctx.IdentifierList().Accept(v).([]*VarSymbol)
+		funSym.Params = symbols
 	}
+
 	ctx.Block().Accept(v)
+
+	// Record node for main function (or should I say 'mehn' function? ha ha)
+	if funSym.FuncName == MAIN {
+		v.MainFunc = ctx
+	}
+
 	v.CurrentScope = funcScope.EnclosingScope()
 	return nil
 }
@@ -101,13 +110,15 @@ func (v *ScopeDefineVisitor) VisitForStmt(ctx *parser.ForStmtContext) interface{
 }
 
 func (v *ScopeDefineVisitor) VisitIdentifierList(ctx *parser.IdentifierListContext) interface{} {
+	symbols := make([]*VarSymbol, 0)
 	for _, id := range ctx.AllIDENTIFIER() {
 		varSym := &VarSymbol{
 			VarName: id.GetText(),
 		}
 		v.CurrentScope.Define(varSym)
+		symbols = append(symbols, varSym)
 	}
-	return nil
+	return symbols
 }
 
 func (v *ScopeDefineVisitor) VisitIDExpr(ctx *parser.IDExprContext) interface{} {
@@ -170,26 +181,35 @@ func (v *ScopeResVisitor) VisitChildren(node antlr.RuleNode) interface{} {
 
 func (v *ScopeResVisitor) VisitIDExpr(ctx *parser.IDExprContext) interface{} {
 	fmt.Println("resolving ", ctx.IDENTIFIER().GetText())
-	scope := v.NodeMetadata[ctx].scope
-	if _, err := scope.Resolve(ctx.IDENTIFIER().GetText()); err != nil {
+	m := v.NodeMetadata[ctx]
+	sym, err := m.scope.Resolve(ctx.IDENTIFIER().GetText())
+	if err != nil {
 		v.Errors = append(v.Errors, err)
+		return nil
 	}
+	m.symbol = sym
 	return nil
 }
 
 func (v *ScopeResVisitor) VisitAssignStmt(ctx *parser.AssignStmtContext) interface{} {
-	scope := v.NodeMetadata[ctx].scope
-	if _, err := scope.Resolve(ctx.IDENTIFIER().GetText()); err != nil {
+	m := v.NodeMetadata[ctx]
+	sym, err := m.scope.Resolve(ctx.IDENTIFIER().GetText())
+	if err != nil {
 		v.Errors = append(v.Errors, err)
+		return nil
 	}
+	m.symbol = sym
 	return nil
 }
 
 func (v *ScopeResVisitor) VisitFuncCall(ctx *parser.FuncCallContext) interface{} {
-	scope := v.NodeMetadata[ctx].scope
-	if _, err := scope.Resolve(ctx.IDENTIFIER().GetText()); err != nil {
+	m := v.NodeMetadata[ctx]
+	sym, err := m.scope.Resolve(ctx.IDENTIFIER().GetText())
+	if err != nil {
 		v.Errors = append(v.Errors, err)
+		return nil
 	}
+	m.symbol = sym
 	ctx.ExprList().Accept(v)
 	return nil
 }

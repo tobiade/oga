@@ -39,8 +39,8 @@ expressionStmt: expr;
 
 expr:
 	IDENTIFIER '(' exprList? ')'	# FuncCall
-	| expr ('*' | '/') expr			# MultDivExpr
-	| expr ('+' | '-') expr			# AddSubExpr
+	| expr op = (MUL | DIV) expr	# MultDivExpr
+	| expr (PLUS | MINUS) expr		# AddSubExpr
 	| expr relOp expr				# RelExpr
 	| INT							# IntExpr
 	| STR							# StrExpr
@@ -67,6 +67,12 @@ NOT_EQUAL: 'no resemble';
 SEMI: ';';
 ASSIGN: '=';
 COMMA: ',';
+
+// Arithmetic
+MUL: '*';
+DIV: '/';
+PLUS: '+';
+MINUS: '-';
 
 // Literals
 INT: '0' | [1-9] [0-9]*;

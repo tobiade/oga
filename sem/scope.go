@@ -12,8 +12,11 @@ const (
 	NONE
 )
 
+const MAIN = "mehn"
+
 type Metadata struct {
-	scope Scope
+	scope  Scope
+	symbol Symbol
 }
 
 type Symbol interface {
@@ -37,6 +40,7 @@ func (v *VarSymbol) Type() Type {
 type FuncSymbol struct {
 	FuncName string
 	FuncType Type
+	Params   []*VarSymbol
 }
 
 func (v *FuncSymbol) Name() string {

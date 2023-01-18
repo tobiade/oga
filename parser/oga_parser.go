@@ -33,15 +33,16 @@ var ogaParserStaticData struct {
 func ogaParserInit() {
 	staticData := &ogaParserStaticData
 	staticData.literalNames = []string{
-		"", "'('", "')'", "'{'", "'}'", "'*'", "'/'", "'+'", "'-'", "'make'",
-		"'funke'", "'suppose say'", "'dapada'", "'otherwise'", "'dey play'",
-		"'big pass'", "'resemble'", "'small pass'", "'no resemble'", "';'",
-		"'='", "','",
+		"", "'('", "')'", "'{'", "'}'", "'make'", "'funke'", "'suppose say'",
+		"'dapada'", "'otherwise'", "'dey play'", "'big pass'", "'resemble'",
+		"'small pass'", "'no resemble'", "';'", "'='", "','", "'*'", "'/'",
+		"'+'", "'-'",
 	}
 	staticData.symbolicNames = []string{
-		"", "", "", "", "", "", "", "", "", "MAKE", "FUNC", "IF", "RETURN",
-		"ELSE", "FOR", "GREATER", "EQUALS", "LESS", "NOT_EQUAL", "SEMI", "ASSIGN",
-		"COMMA", "INT", "STR", "IDENTIFIER", "LINE_COMMENT", "EOS", "WS",
+		"", "", "", "", "", "MAKE", "FUNC", "IF", "RETURN", "ELSE", "FOR", "GREATER",
+		"EQUALS", "LESS", "NOT_EQUAL", "SEMI", "ASSIGN", "COMMA", "MUL", "DIV",
+		"PLUS", "MINUS", "INT", "STR", "IDENTIFIER", "LINE_COMMENT", "EOS",
+		"WS",
 	}
 	staticData.ruleNames = []string{
 		"sourceFile", "varDecl", "funcDecl", "identifierList", "stmtList", "stmt",
@@ -69,21 +70,21 @@ func ogaParserInit() {
 		14, 1, 14, 1, 14, 1, 14, 5, 14, 167, 8, 14, 10, 14, 12, 14, 170, 9, 14,
 		1, 15, 1, 15, 1, 15, 5, 15, 175, 8, 15, 10, 15, 12, 15, 178, 9, 15, 1,
 		15, 0, 1, 28, 16, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28,
-		30, 0, 3, 1, 0, 15, 18, 1, 0, 5, 6, 1, 0, 7, 8, 193, 0, 40, 1, 0, 0, 0,
-		2, 45, 1, 0, 0, 0, 4, 51, 1, 0, 0, 0, 6, 60, 1, 0, 0, 0, 8, 74, 1, 0, 0,
-		0, 10, 84, 1, 0, 0, 0, 12, 86, 1, 0, 0, 0, 14, 98, 1, 0, 0, 0, 16, 108,
+		30, 0, 3, 1, 0, 11, 14, 1, 0, 18, 19, 1, 0, 20, 21, 193, 0, 40, 1, 0, 0,
+		0, 2, 45, 1, 0, 0, 0, 4, 51, 1, 0, 0, 0, 6, 60, 1, 0, 0, 0, 8, 74, 1, 0,
+		0, 0, 10, 84, 1, 0, 0, 0, 12, 86, 1, 0, 0, 0, 14, 98, 1, 0, 0, 0, 16, 108,
 		1, 0, 0, 0, 18, 111, 1, 0, 0, 0, 20, 115, 1, 0, 0, 0, 22, 132, 1, 0, 0,
 		0, 24, 136, 1, 0, 0, 0, 26, 138, 1, 0, 0, 0, 28, 154, 1, 0, 0, 0, 30, 171,
 		1, 0, 0, 0, 32, 35, 3, 4, 2, 0, 33, 35, 3, 2, 1, 0, 34, 32, 1, 0, 0, 0,
 		34, 33, 1, 0, 0, 0, 35, 36, 1, 0, 0, 0, 36, 37, 5, 26, 0, 0, 37, 39, 1,
 		0, 0, 0, 38, 34, 1, 0, 0, 0, 39, 42, 1, 0, 0, 0, 40, 38, 1, 0, 0, 0, 40,
 		41, 1, 0, 0, 0, 41, 43, 1, 0, 0, 0, 42, 40, 1, 0, 0, 0, 43, 44, 5, 0, 0,
-		1, 44, 1, 1, 0, 0, 0, 45, 46, 5, 9, 0, 0, 46, 49, 5, 24, 0, 0, 47, 48,
-		5, 20, 0, 0, 48, 50, 3, 28, 14, 0, 49, 47, 1, 0, 0, 0, 49, 50, 1, 0, 0,
-		0, 50, 3, 1, 0, 0, 0, 51, 52, 5, 10, 0, 0, 52, 53, 5, 24, 0, 0, 53, 55,
+		1, 44, 1, 1, 0, 0, 0, 45, 46, 5, 5, 0, 0, 46, 49, 5, 24, 0, 0, 47, 48,
+		5, 16, 0, 0, 48, 50, 3, 28, 14, 0, 49, 47, 1, 0, 0, 0, 49, 50, 1, 0, 0,
+		0, 50, 3, 1, 0, 0, 0, 51, 52, 5, 6, 0, 0, 52, 53, 5, 24, 0, 0, 53, 55,
 		5, 1, 0, 0, 54, 56, 3, 6, 3, 0, 55, 54, 1, 0, 0, 0, 55, 56, 1, 0, 0, 0,
 		56, 57, 1, 0, 0, 0, 57, 58, 5, 2, 0, 0, 58, 59, 3, 12, 6, 0, 59, 5, 1,
-		0, 0, 0, 60, 65, 5, 24, 0, 0, 61, 62, 5, 21, 0, 0, 62, 64, 5, 24, 0, 0,
+		0, 0, 0, 60, 65, 5, 24, 0, 0, 61, 62, 5, 17, 0, 0, 62, 64, 5, 24, 0, 0,
 		63, 61, 1, 0, 0, 0, 64, 67, 1, 0, 0, 0, 65, 63, 1, 0, 0, 0, 65, 66, 1,
 		0, 0, 0, 66, 7, 1, 0, 0, 0, 67, 65, 1, 0, 0, 0, 68, 70, 3, 10, 5, 0, 69,
 		71, 5, 26, 0, 0, 70, 69, 1, 0, 0, 0, 71, 72, 1, 0, 0, 0, 72, 70, 1, 0,
@@ -96,17 +97,17 @@ func ogaParserInit() {
 		87, 89, 5, 26, 0, 0, 88, 87, 1, 0, 0, 0, 89, 92, 1, 0, 0, 0, 90, 88, 1,
 		0, 0, 0, 90, 91, 1, 0, 0, 0, 91, 94, 1, 0, 0, 0, 92, 90, 1, 0, 0, 0, 93,
 		95, 3, 8, 4, 0, 94, 93, 1, 0, 0, 0, 94, 95, 1, 0, 0, 0, 95, 96, 1, 0, 0,
-		0, 96, 97, 5, 4, 0, 0, 97, 13, 1, 0, 0, 0, 98, 99, 5, 11, 0, 0, 99, 100,
-		3, 22, 11, 0, 100, 106, 3, 12, 6, 0, 101, 104, 5, 13, 0, 0, 102, 105, 3,
+		0, 96, 97, 5, 4, 0, 0, 97, 13, 1, 0, 0, 0, 98, 99, 5, 7, 0, 0, 99, 100,
+		3, 22, 11, 0, 100, 106, 3, 12, 6, 0, 101, 104, 5, 9, 0, 0, 102, 105, 3,
 		14, 7, 0, 103, 105, 3, 12, 6, 0, 104, 102, 1, 0, 0, 0, 104, 103, 1, 0,
 		0, 0, 105, 107, 1, 0, 0, 0, 106, 101, 1, 0, 0, 0, 106, 107, 1, 0, 0, 0,
-		107, 15, 1, 0, 0, 0, 108, 109, 5, 12, 0, 0, 109, 110, 3, 28, 14, 0, 110,
-		17, 1, 0, 0, 0, 111, 112, 5, 24, 0, 0, 112, 113, 5, 20, 0, 0, 113, 114,
-		3, 28, 14, 0, 114, 19, 1, 0, 0, 0, 115, 128, 5, 14, 0, 0, 116, 119, 3,
+		107, 15, 1, 0, 0, 0, 108, 109, 5, 8, 0, 0, 109, 110, 3, 28, 14, 0, 110,
+		17, 1, 0, 0, 0, 111, 112, 5, 24, 0, 0, 112, 113, 5, 16, 0, 0, 113, 114,
+		3, 28, 14, 0, 114, 19, 1, 0, 0, 0, 115, 128, 5, 10, 0, 0, 116, 119, 3,
 		2, 1, 0, 117, 119, 3, 18, 9, 0, 118, 116, 1, 0, 0, 0, 118, 117, 1, 0, 0,
-		0, 118, 119, 1, 0, 0, 0, 119, 120, 1, 0, 0, 0, 120, 122, 5, 19, 0, 0, 121,
+		0, 118, 119, 1, 0, 0, 0, 119, 120, 1, 0, 0, 0, 120, 122, 5, 15, 0, 0, 121,
 		123, 3, 22, 11, 0, 122, 121, 1, 0, 0, 0, 122, 123, 1, 0, 0, 0, 123, 124,
-		1, 0, 0, 0, 124, 126, 5, 19, 0, 0, 125, 127, 3, 18, 9, 0, 126, 125, 1,
+		1, 0, 0, 0, 124, 126, 5, 15, 0, 0, 125, 127, 3, 18, 9, 0, 126, 125, 1,
 		0, 0, 0, 126, 127, 1, 0, 0, 0, 127, 129, 1, 0, 0, 0, 128, 118, 1, 0, 0,
 		0, 128, 129, 1, 0, 0, 0, 129, 130, 1, 0, 0, 0, 130, 131, 3, 12, 6, 0, 131,
 		21, 1, 0, 0, 0, 132, 133, 3, 28, 14, 0, 133, 134, 3, 24, 12, 0, 134, 135,
@@ -124,7 +125,7 @@ func ogaParserInit() {
 		28, 14, 6, 165, 167, 1, 0, 0, 0, 166, 156, 1, 0, 0, 0, 166, 159, 1, 0,
 		0, 0, 166, 162, 1, 0, 0, 0, 167, 170, 1, 0, 0, 0, 168, 166, 1, 0, 0, 0,
 		168, 169, 1, 0, 0, 0, 169, 29, 1, 0, 0, 0, 170, 168, 1, 0, 0, 0, 171, 176,
-		3, 28, 14, 0, 172, 173, 5, 21, 0, 0, 173, 175, 3, 28, 14, 0, 174, 172,
+		3, 28, 14, 0, 172, 173, 5, 17, 0, 0, 173, 175, 3, 28, 14, 0, 174, 172,
 		1, 0, 0, 0, 175, 178, 1, 0, 0, 0, 176, 174, 1, 0, 0, 0, 176, 177, 1, 0,
 		0, 0, 177, 31, 1, 0, 0, 0, 178, 176, 1, 0, 0, 0, 21, 34, 40, 49, 55, 65,
 		72, 76, 84, 90, 94, 104, 106, 118, 122, 126, 128, 144, 154, 166, 168, 176,
@@ -170,23 +171,23 @@ const (
 	OgaParserT__1         = 2
 	OgaParserT__2         = 3
 	OgaParserT__3         = 4
-	OgaParserT__4         = 5
-	OgaParserT__5         = 6
-	OgaParserT__6         = 7
-	OgaParserT__7         = 8
-	OgaParserMAKE         = 9
-	OgaParserFUNC         = 10
-	OgaParserIF           = 11
-	OgaParserRETURN       = 12
-	OgaParserELSE         = 13
-	OgaParserFOR          = 14
-	OgaParserGREATER      = 15
-	OgaParserEQUALS       = 16
-	OgaParserLESS         = 17
-	OgaParserNOT_EQUAL    = 18
-	OgaParserSEMI         = 19
-	OgaParserASSIGN       = 20
-	OgaParserCOMMA        = 21
+	OgaParserMAKE         = 5
+	OgaParserFUNC         = 6
+	OgaParserIF           = 7
+	OgaParserRETURN       = 8
+	OgaParserELSE         = 9
+	OgaParserFOR          = 10
+	OgaParserGREATER      = 11
+	OgaParserEQUALS       = 12
+	OgaParserLESS         = 13
+	OgaParserNOT_EQUAL    = 14
+	OgaParserSEMI         = 15
+	OgaParserASSIGN       = 16
+	OgaParserCOMMA        = 17
+	OgaParserMUL          = 18
+	OgaParserDIV          = 19
+	OgaParserPLUS         = 20
+	OgaParserMINUS        = 21
 	OgaParserINT          = 22
 	OgaParserSTR          = 23
 	OgaParserIDENTIFIER   = 24
@@ -980,7 +981,7 @@ func (p *OgaParser) StmtList() (localctx IStmtListContext) {
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
-	for ok := true; ok; ok = (int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&29383170) != 0 {
+	for ok := true; ok; ok = (int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&29361570) != 0 {
 		{
 			p.SetState(68)
 			p.Stmt()
@@ -1360,7 +1361,7 @@ func (p *OgaParser) Block() (localctx IBlockContext) {
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
-	if (int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&29383170) != 0 {
+	if (int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&29361570) != 0 {
 		{
 			p.SetState(93)
 			p.StmtList()
@@ -2005,7 +2006,7 @@ func (p *OgaParser) ForStmt() (localctx IForStmtContext) {
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
-	if (int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&17302016) != 0 {
+	if (int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&16810016) != 0 {
 		p.SetState(118)
 		p.GetErrorHandler().Sync(p)
 
@@ -2320,7 +2321,7 @@ func (p *OgaParser) RelOp() (localctx IRelOpContext) {
 		p.SetState(136)
 		_la = p.GetTokenStream().LA(1)
 
-		if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&491520) != 0) {
+		if !((int64(_la) & ^0x3f) == 0 && ((int64(1)<<_la)&30720) != 0) {
 			p.GetErrorHandler().RecoverInline(p)
 		} else {
 			p.GetErrorHandler().ReportMatch(p)
@@ -2487,6 +2488,7 @@ func (s *ExprContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) s
 
 type MultDivExprContext struct {
 	*ExprContext
+	op antlr.Token
 }
 
 func NewMultDivExprContext(parser antlr.Parser, ctx antlr.ParserRuleContext) *MultDivExprContext {
@@ -2498,6 +2500,10 @@ func NewMultDivExprContext(parser antlr.Parser, ctx antlr.ParserRuleContext) *Mu
 
 	return p
 }
+
+func (s *MultDivExprContext) GetOp() antlr.Token { return s.op }
+
+func (s *MultDivExprContext) SetOp(v antlr.Token) { s.op = v }
 
 func (s *MultDivExprContext) GetRuleContext() antlr.RuleContext {
 	return s
@@ -2542,6 +2548,14 @@ func (s *MultDivExprContext) Expr(i int) IExprContext {
 	}
 
 	return t.(IExprContext)
+}
+
+func (s *MultDivExprContext) MUL() antlr.TerminalNode {
+	return s.GetToken(OgaParserMUL, 0)
+}
+
+func (s *MultDivExprContext) DIV() antlr.TerminalNode {
+	return s.GetToken(OgaParserDIV, 0)
 }
 
 func (s *MultDivExprContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
@@ -2886,6 +2900,14 @@ func (s *AddSubExprContext) Expr(i int) IExprContext {
 	return t.(IExprContext)
 }
 
+func (s *AddSubExprContext) PLUS() antlr.TerminalNode {
+	return s.GetToken(OgaParserPLUS, 0)
+}
+
+func (s *AddSubExprContext) MINUS() antlr.TerminalNode {
+	return s.GetToken(OgaParserMINUS, 0)
+}
+
 func (s *AddSubExprContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case OgaVisitor:
@@ -3033,10 +3055,17 @@ func (p *OgaParser) expr(_p int) (localctx IExprContext) {
 				}
 				{
 					p.SetState(157)
+
+					var _lt = p.GetTokenStream().LT(1)
+
+					localctx.(*MultDivExprContext).op = _lt
+
 					_la = p.GetTokenStream().LA(1)
 
-					if !(_la == OgaParserT__4 || _la == OgaParserT__5) {
-						p.GetErrorHandler().RecoverInline(p)
+					if !(_la == OgaParserMUL || _la == OgaParserDIV) {
+						var _ri = p.GetErrorHandler().RecoverInline(p)
+
+						localctx.(*MultDivExprContext).op = _ri
 					} else {
 						p.GetErrorHandler().ReportMatch(p)
 						p.Consume()
@@ -3059,7 +3088,7 @@ func (p *OgaParser) expr(_p int) (localctx IExprContext) {
 					p.SetState(160)
 					_la = p.GetTokenStream().LA(1)
 
-					if !(_la == OgaParserT__6 || _la == OgaParserT__7) {
+					if !(_la == OgaParserPLUS || _la == OgaParserMINUS) {
 						p.GetErrorHandler().RecoverInline(p)
 					} else {
 						p.GetErrorHandler().ReportMatch(p)
