@@ -1,8 +1,6 @@
-package sem
+package lang
 
 import (
-	"fmt"
-
 	"github.com/antlr/antlr4/runtime/Go/antlr/v4"
 	"github.com/tobiade/oga/parser"
 )
@@ -12,7 +10,7 @@ type ScopeDefineVisitor struct {
 	*parser.BaseOgaVisitor
 	CurrentScope Scope
 	MainFunc     antlr.ParserRuleContext
-	NodeMetadata map[antlr.ParserRuleContext]Metadata
+	NodeMetadata map[antlr.ParserRuleContext]*Metadata
 }
 
 func (v *ScopeDefineVisitor) Visit(tree antlr.ParseTree) interface{} {
@@ -39,14 +37,17 @@ func (v *ScopeDefineVisitor) VisitSourceFile(ctx *parser.SourceFileContext) inte
 func (v *ScopeDefineVisitor) VisitVarDecl(ctx *parser.VarDeclContext) interface{} {
 	varSym := &VarSymbol{
 		VarName: ctx.IDENTIFIER().GetText(),
+		Node:    ctx,
 	}
 	v.CurrentScope.Define(varSym)
+	ctx.Expr().Accept(v)
 	return nil
 }
 
 func (v *ScopeDefineVisitor) VisitFuncDecl(ctx *parser.FuncDeclContext) interface{} {
 	funSym := &FuncSymbol{
 		FuncName: ctx.IDENTIFIER().GetText(),
+		Node:     ctx,
 	}
 	v.CurrentScope.Define(funSym)
 	funcScope := NewDefaultScope(funSym.FuncName, v.CurrentScope)
@@ -109,11 +110,16 @@ func (v *ScopeDefineVisitor) VisitForStmt(ctx *parser.ForStmtContext) interface{
 	return nil
 }
 
+func (v *ScopeDefineVisitor) VisitReturnStmt(ctx *parser.ReturnStmtContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *ScopeDefineVisitor) VisitIdentifierList(ctx *parser.IdentifierListContext) interface{} {
 	symbols := make([]*VarSymbol, 0)
 	for _, id := range ctx.AllIDENTIFIER() {
 		varSym := &VarSymbol{
 			VarName: id.GetText(),
+			Node:    id,
 		}
 		v.CurrentScope.Define(varSym)
 		symbols = append(symbols, varSym)
@@ -122,7 +128,7 @@ func (v *ScopeDefineVisitor) VisitIdentifierList(ctx *parser.IdentifierListConte
 }
 
 func (v *ScopeDefineVisitor) VisitIDExpr(ctx *parser.IDExprContext) interface{} {
-	v.NodeMetadata[ctx] = Metadata{scope: v.CurrentScope}
+	v.NodeMetadata[ctx] = &Metadata{scope: v.CurrentScope}
 	return nil
 }
 
@@ -135,8 +141,10 @@ func (v *ScopeDefineVisitor) VisitMultDivExpr(ctx *parser.MultDivExprContext) in
 }
 
 func (v *ScopeDefineVisitor) VisitFuncCall(ctx *parser.FuncCallContext) interface{} {
-	v.NodeMetadata[ctx] = Metadata{scope: v.CurrentScope}
-	ctx.ExprList().Accept(v)
+	v.NodeMetadata[ctx] = &Metadata{scope: v.CurrentScope}
+	if ctx.ExprList() != nil {
+		ctx.ExprList().Accept(v)
+	}
 	return nil
 }
 
@@ -157,14 +165,14 @@ func (v *ScopeDefineVisitor) VisitAddSubExpr(ctx *parser.AddSubExprContext) inte
 }
 
 func (v *ScopeDefineVisitor) VisitAssignStmt(ctx *parser.AssignStmtContext) interface{} {
-	v.NodeMetadata[ctx] = Metadata{scope: v.CurrentScope}
+	v.NodeMetadata[ctx] = &Metadata{scope: v.CurrentScope}
 	return nil
 }
 
 // ScopeResVisitor resolves symbols that might have beeen defined by ScopeDefineVistor
 type ScopeResVisitor struct {
 	*parser.BaseOgaVisitor
-	NodeMetadata map[antlr.ParserRuleContext]Metadata
+	NodeMetadata map[antlr.ParserRuleContext]*Metadata
 	Errors       []error
 }
 
@@ -180,7 +188,6 @@ func (v *ScopeResVisitor) VisitChildren(node antlr.RuleNode) interface{} {
 }
 
 func (v *ScopeResVisitor) VisitIDExpr(ctx *parser.IDExprContext) interface{} {
-	fmt.Println("resolving ", ctx.IDENTIFIER().GetText())
 	m := v.NodeMetadata[ctx]
 	sym, err := m.scope.Resolve(ctx.IDENTIFIER().GetText())
 	if err != nil {
@@ -210,7 +217,9 @@ func (v *ScopeResVisitor) VisitFuncCall(ctx *parser.FuncCallContext) interface{}
 		return nil
 	}
 	m.symbol = sym
-	ctx.ExprList().Accept(v)
+	if ctx.ExprList() != nil {
+		ctx.ExprList().Accept(v)
+	}
 	return nil
 }
 

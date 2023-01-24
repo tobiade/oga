@@ -1,11 +1,11 @@
-funke dostuff(){
+funke mehn(){
 
-    
-		dey play {
-
-        }
-	
-		make x = 4
+		make x = doIt()
+		
+	}
+	funke doIt() {
+		make x = 4*2
+		dapada x
 	}
 
 

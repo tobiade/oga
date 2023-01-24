@@ -1,6 +1,10 @@
-package sem
+package lang
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/antlr/antlr4/runtime/Go/antlr/v4"
+)
 
 type Type int
 
@@ -27,6 +31,7 @@ type Symbol interface {
 type VarSymbol struct {
 	VarName string
 	VarType Type
+	Node    antlr.ParseTree
 }
 
 func (v *VarSymbol) Name() string {
@@ -41,6 +46,7 @@ type FuncSymbol struct {
 	FuncName string
 	FuncType Type
 	Params   []*VarSymbol
+	Node     antlr.ParseTree
 }
 
 func (v *FuncSymbol) Name() string {

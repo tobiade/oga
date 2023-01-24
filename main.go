@@ -4,15 +4,19 @@ import (
 	"fmt"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr/v4"
+	"github.com/tobiade/oga/lang"
 	"github.com/tobiade/oga/parser"
-	"github.com/tobiade/oga/sem"
 )
 
 func main() {
 	code := `funke mehn(){
 
-		make x = 4*5
+		make x = doIt()
 		
+	}
+	funke doIt() {
+		make x = 4*10
+		dapada x
 	}
 	`
 	input := antlr.NewInputStream(code)
@@ -22,15 +26,15 @@ func main() {
 	p.BuildParseTrees = true
 	tree := p.SourceFile()
 
-	global := sem.NewDefaultScope("global", nil)
-	defV := sem.ScopeDefineVisitor{
+	global := lang.NewDefaultScope("global", nil)
+	defV := lang.ScopeDefineVisitor{
 		BaseOgaVisitor: &parser.BaseOgaVisitor{},
 		CurrentScope:   &global,
-		NodeMetadata:   make(map[antlr.ParserRuleContext]sem.Metadata),
+		NodeMetadata:   make(map[antlr.ParserRuleContext]*lang.Metadata),
 	}
 	defV.Visit(tree)
 
-	resV := sem.ScopeResVisitor{
+	resV := lang.ScopeResVisitor{
 		BaseOgaVisitor: &parser.BaseOgaVisitor{},
 		NodeMetadata:   defV.NodeMetadata,
 		Errors:         make([]error, 0),
@@ -40,9 +44,9 @@ func main() {
 		fmt.Println(e)
 	}
 
-	globalMem := sem.MemorySpace{}
-	stack := []sem.MemorySpace{globalMem}
-	interpreter := &sem.Interpreter{
+	globalMem := lang.MemorySpace{}
+	stack := []lang.MemorySpace{globalMem}
+	interpreter := &lang.Interpreter{
 		BaseOgaVisitor: &parser.BaseOgaVisitor{},
 		Stack:          stack,
 		NodeMetadata:   resV.NodeMetadata,

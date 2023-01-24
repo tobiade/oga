@@ -1,4 +1,4 @@
-package sem
+package lang
 
 import (
 	"fmt"
@@ -8,17 +8,29 @@ import (
 	"github.com/tobiade/oga/parser"
 )
 
+const RETURN = "return"
+
 type MemorySpace map[string]any
 
 type Interpreter struct {
 	*parser.BaseOgaVisitor
 	Global       MemorySpace
 	Stack        []MemorySpace
-	NodeMetadata map[antlr.ParserRuleContext]Metadata
+	NodeMetadata map[antlr.ParserRuleContext]*Metadata
 }
 
 func (v *Interpreter) top() MemorySpace {
 	return v.Stack[len(v.Stack)-1]
+}
+
+func (v *Interpreter) push(mem MemorySpace) {
+	v.Stack = append(v.Stack, mem)
+}
+
+func (v *Interpreter) pop() MemorySpace {
+	top := v.top()
+	v.Stack = v.Stack[:len(v.Stack)-1]
+	return top
 }
 
 func (v *Interpreter) Visit(tree antlr.ParseTree) interface{} {
@@ -33,7 +45,7 @@ func (v *Interpreter) VisitChildren(node antlr.RuleNode) interface{} {
 }
 
 func (v *Interpreter) VisitFuncDecl(ctx *parser.FuncDeclContext) interface{} {
-	return ctx.Block().Accept(v)
+	return v.VisitChildren(ctx)
 }
 
 func (v *Interpreter) VisitBlock(ctx *parser.BlockContext) interface{} {
@@ -75,6 +87,14 @@ func (v *Interpreter) VisitIntExpr(ctx *parser.IntExprContext) interface{} {
 	return num
 }
 
+func (v *Interpreter) VisitIDExpr(ctx *parser.IDExprContext) interface{} {
+	return v.top()[ctx.IDENTIFIER().GetText()]
+}
+
+func (v *Interpreter) VisitStrExpr(ctx *parser.StrExprContext) interface{} {
+	return ctx.STR().GetText()
+}
+
 func (v *Interpreter) VisitVarDecl(ctx *parser.VarDeclContext) interface{} {
 	if ctx.Expr() != nil {
 		varName := ctx.IDENTIFIER().GetText()
@@ -88,4 +108,38 @@ func (v *Interpreter) VisitVarDecl(ctx *parser.VarDeclContext) interface{} {
 func (v *Interpreter) VisitAssignStmt(ctx *parser.AssignStmtContext) interface{} {
 	v.top()[ctx.IDENTIFIER().GetText()] = ctx.Expr().Accept(v)
 	return nil
+}
+
+func (v *Interpreter) VisitReturnStmt(ctx *parser.ReturnStmtContext) interface{} {
+	ret := ctx.Expr().Accept(v)
+	mem := MemorySpace{}
+	mem[RETURN] = ret
+	v.push(mem)
+	return ret
+}
+
+func (v *Interpreter) VisitFuncCall(ctx *parser.FuncCallContext) interface{} {
+	mem := MemorySpace{}
+	sym := v.NodeMetadata[ctx].symbol.(*FuncSymbol)
+	if ctx.ExprList() != nil {
+		exprResults := ctx.ExprList().Accept(v).([]any)
+		for idx, p := range sym.Params {
+			mem[p.Name()] = exprResults[idx]
+		}
+	}
+	v.Stack = append(v.Stack, mem)
+	sym.Node.Accept(v)
+	// Pop return value
+	r := v.pop()
+	// Pop stack frame for function
+	v.pop()
+	return r[RETURN]
+}
+
+func (v *Interpreter) VisitExprList(ctx *parser.ExprListContext) interface{} {
+	res := make([]any, 0)
+	for _, e := range ctx.AllExpr() {
+		res = append(res, e.Accept(v))
+	}
+	return res
 }
