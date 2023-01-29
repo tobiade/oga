@@ -1,11 +1,9 @@
 funke mehn(){
-
-		make x = doIt()
+	make x = doIt()*doIt()
 		
-	}
-	funke doIt() {
-		make x = 4*2
-		dapada x
-	}
+}
 
-
+funke doIt() {
+	make x = 2+4*10
+	dapada x
+}

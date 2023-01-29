@@ -40,7 +40,7 @@ expressionStmt: expr;
 expr:
 	IDENTIFIER '(' exprList? ')'	# FuncCall
 	| expr op = (MUL | DIV) expr	# MultDivExpr
-	| expr (PLUS | MINUS) expr		# AddSubExpr
+	| expr op = (PLUS | MINUS) expr	# AddSubExpr
 	| expr relOp expr				# RelExpr
 	| INT							# IntExpr
 	| STR							# StrExpr

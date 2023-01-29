@@ -2843,6 +2843,7 @@ func (s *IntExprContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 
 type AddSubExprContext struct {
 	*ExprContext
+	op antlr.Token
 }
 
 func NewAddSubExprContext(parser antlr.Parser, ctx antlr.ParserRuleContext) *AddSubExprContext {
@@ -2854,6 +2855,10 @@ func NewAddSubExprContext(parser antlr.Parser, ctx antlr.ParserRuleContext) *Add
 
 	return p
 }
+
+func (s *AddSubExprContext) GetOp() antlr.Token { return s.op }
+
+func (s *AddSubExprContext) SetOp(v antlr.Token) { s.op = v }
 
 func (s *AddSubExprContext) GetRuleContext() antlr.RuleContext {
 	return s
@@ -3086,10 +3091,17 @@ func (p *OgaParser) expr(_p int) (localctx IExprContext) {
 				}
 				{
 					p.SetState(160)
+
+					var _lt = p.GetTokenStream().LT(1)
+
+					localctx.(*AddSubExprContext).op = _lt
+
 					_la = p.GetTokenStream().LA(1)
 
 					if !(_la == OgaParserPLUS || _la == OgaParserMINUS) {
-						p.GetErrorHandler().RecoverInline(p)
+						var _ri = p.GetErrorHandler().RecoverInline(p)
+
+						localctx.(*AddSubExprContext).op = _ri
 					} else {
 						p.GetErrorHandler().ReportMatch(p)
 						p.Consume()

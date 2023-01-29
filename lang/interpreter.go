@@ -19,6 +19,11 @@ type Interpreter struct {
 	NodeMetadata map[antlr.ParserRuleContext]*Metadata
 }
 
+type MathExprContext interface {
+	GetOp() antlr.Token
+	Expr(i int) parser.IExprContext
+}
+
 func (v *Interpreter) top() MemorySpace {
 	return v.Stack[len(v.Stack)-1]
 }
@@ -64,19 +69,12 @@ func (v *Interpreter) VisitExpressionStmt(ctx *parser.ExpressionStmtContext) int
 	return v.VisitChildren(ctx)
 }
 
+func (v *Interpreter) VisitAddSubExpr(ctx *parser.AddSubExprContext) interface{} {
+	return v.doMath(ctx)
+}
+
 func (v *Interpreter) VisitMultDivExpr(ctx *parser.MultDivExprContext) interface{} {
-	left := ctx.Expr(0).Accept(v).(int)
-	right := ctx.Expr(1).Accept(v).(int)
-	var res int
-	switch ctx.GetOp().GetText() {
-	case "*":
-		res = left * right
-	case "/":
-		res = left / right
-	default:
-		panic(fmt.Sprintf("unknown operator: %s", ctx.GetOp().GetText()))
-	}
-	return res
+	return v.doMath(ctx)
 }
 
 func (v *Interpreter) VisitIntExpr(ctx *parser.IntExprContext) interface{} {
@@ -140,6 +138,25 @@ func (v *Interpreter) VisitExprList(ctx *parser.ExprListContext) interface{} {
 	res := make([]any, 0)
 	for _, e := range ctx.AllExpr() {
 		res = append(res, e.Accept(v))
+	}
+	return res
+}
+
+func (v *Interpreter) doMath(ctx MathExprContext) int {
+	left := ctx.Expr(0).Accept(v).(int)
+	right := ctx.Expr(1).Accept(v).(int)
+	var res int
+	switch ctx.GetOp().GetText() {
+	case "*":
+		res = left * right
+	case "/":
+		res = left / right
+	case "+":
+		res = left + right
+	case "-":
+		res = left - right
+	default:
+		panic(fmt.Sprintf("unknown operator: %s", ctx.GetOp().GetText()))
 	}
 	return res
 }

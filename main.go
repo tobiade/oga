@@ -11,11 +11,11 @@ import (
 func main() {
 	code := `funke mehn(){
 
-		make x = doIt()
+		make x = doIt(2)*doIt(2)
 		
 	}
-	funke doIt() {
-		make x = 4*10
+	funke doIt(num) {
+		make x = num*10
 		dapada x
 	}
 	`
