@@ -82,7 +82,7 @@ func (v *ScopeDefineVisitor) VisitStmt(ctx *parser.StmtContext) interface{} {
 }
 
 func (v *ScopeDefineVisitor) VisitIfStmt(ctx *parser.IfStmtContext) interface{} {
-	ctx.Condition().Accept(v)
+	ctx.Expr().Accept(v)
 	for _, b := range ctx.AllBlock() {
 		ifScope := NewDefaultScope("if-else-scope", v.CurrentScope)
 		v.CurrentScope = &ifScope
@@ -93,10 +93,6 @@ func (v *ScopeDefineVisitor) VisitIfStmt(ctx *parser.IfStmtContext) interface{} 
 		ctx.IfStmt().Accept(v)
 	}
 	return nil
-}
-
-func (v *ScopeDefineVisitor) VisitCondition(ctx *parser.ConditionContext) interface{} {
-	return v.VisitChildren(ctx)
 }
 
 func (v *ScopeDefineVisitor) VisitForStmt(ctx *parser.ForStmtContext) interface{} {
@@ -153,6 +149,10 @@ func (v *ScopeDefineVisitor) VisitExprList(ctx *parser.ExprListContext) interfac
 }
 
 func (v *ScopeDefineVisitor) VisitRelExpr(ctx *parser.RelExprContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *ScopeDefineVisitor) VisitLogicalExpr(ctx *parser.LogicalExprContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
@@ -263,11 +263,7 @@ func (v *ScopeResVisitor) VisitForStmt(ctx *parser.ForStmtContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *ScopeResVisitor) VisitCondition(ctx *parser.ConditionContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
-func (v *ScopeResVisitor) VisitRelOp(ctx *parser.RelOpContext) interface{} {
+func (v *ScopeResVisitor) VisitLogicalExpr(ctx *parser.LogicalExprContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 

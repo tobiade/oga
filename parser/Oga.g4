@@ -20,32 +20,27 @@ stmt:
 
 block: '{' EOS* stmtList? '}';
 
-ifStmt: IF condition block (ELSE (ifStmt | block))?;
+ifStmt: IF expr block (ELSE (ifStmt | block))?;
 
 returnStmt: RETURN expr;
 
 assignStmt: IDENTIFIER ASSIGN expr;
 
 forStmt:
-	FOR (
-		(varDecl | assignStmt)? SEMI condition? SEMI assignStmt?
-	)? block;
-
-condition: expr relOp expr;
-
-relOp: GREATER | LESS | NOT_EQUAL | EQUALS;
+	FOR ((varDecl | assignStmt)? SEMI expr? SEMI assignStmt?)? block;
 
 expressionStmt: expr;
 
 expr:
-	IDENTIFIER '(' exprList? ')'	# FuncCall
-	| expr op = (MUL | DIV) expr	# MultDivExpr
-	| expr op = (PLUS | MINUS) expr	# AddSubExpr
-	| expr relOp expr				# RelExpr
-	| INT							# IntExpr
-	| STR							# StrExpr
-	| IDENTIFIER					# IDExpr
-	| '(' expr ')'					# NestedExpr;
+	IDENTIFIER '(' exprList? ')'								# FuncCall
+	| expr op = (MUL | DIV) expr								# MultDivExpr
+	| expr op = (PLUS | MINUS) expr								# AddSubExpr
+	| expr rel_op = (GREATER | LESS | NOT_EQUAL | EQUALS) expr	# RelExpr
+	| expr logical_op = (AND | OR) expr							# LogicalExpr
+	| INT														# IntExpr
+	| STR														# StrExpr
+	| IDENTIFIER												# IDExpr
+	| '(' expr ')'												# NestedExpr;
 
 exprList: expr (COMMA expr)*;
 
@@ -62,6 +57,10 @@ GREATER: 'big pass';
 EQUALS: 'resemble';
 LESS: 'small pass';
 NOT_EQUAL: 'no resemble';
+
+// Logical operators
+AND: 'and';
+OR: 'or';
 
 // Punctuation
 SEMI: ';';

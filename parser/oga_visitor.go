@@ -41,12 +41,6 @@ type OgaVisitor interface {
 	// Visit a parse tree produced by OgaParser#forStmt.
 	VisitForStmt(ctx *ForStmtContext) interface{}
 
-	// Visit a parse tree produced by OgaParser#condition.
-	VisitCondition(ctx *ConditionContext) interface{}
-
-	// Visit a parse tree produced by OgaParser#relOp.
-	VisitRelOp(ctx *RelOpContext) interface{}
-
 	// Visit a parse tree produced by OgaParser#expressionStmt.
 	VisitExpressionStmt(ctx *ExpressionStmtContext) interface{}
 
@@ -73,6 +67,9 @@ type OgaVisitor interface {
 
 	// Visit a parse tree produced by OgaParser#AddSubExpr.
 	VisitAddSubExpr(ctx *AddSubExprContext) interface{}
+
+	// Visit a parse tree produced by OgaParser#LogicalExpr.
+	VisitLogicalExpr(ctx *LogicalExprContext) interface{}
 
 	// Visit a parse tree produced by OgaParser#exprList.
 	VisitExprList(ctx *ExprListContext) interface{}

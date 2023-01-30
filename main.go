@@ -12,6 +12,15 @@ func main() {
 	code := `funke mehn(){
 
 		make x = doIt(2)*doIt(2)
+		suppose say x big pass 15000 {
+			x = 1
+		} otherwise suppose say x big pass 12000 {
+			x = 2
+		} otherwise suppose say x big pass 500 {
+			x = 3
+		} otherwise {
+			x = 4
+		}
 		
 	}
 	funke doIt(num) {

@@ -52,14 +52,6 @@ func (v *BaseOgaVisitor) VisitForStmt(ctx *ForStmtContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseOgaVisitor) VisitCondition(ctx *ConditionContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
-func (v *BaseOgaVisitor) VisitRelOp(ctx *RelOpContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
 func (v *BaseOgaVisitor) VisitExpressionStmt(ctx *ExpressionStmtContext) interface{} {
 	return v.VisitChildren(ctx)
 }
@@ -93,6 +85,10 @@ func (v *BaseOgaVisitor) VisitIntExpr(ctx *IntExprContext) interface{} {
 }
 
 func (v *BaseOgaVisitor) VisitAddSubExpr(ctx *AddSubExprContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseOgaVisitor) VisitLogicalExpr(ctx *LogicalExprContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 

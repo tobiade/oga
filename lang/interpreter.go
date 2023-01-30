@@ -2,6 +2,7 @@ package lang
 
 import (
 	"fmt"
+	"reflect"
 	"strconv"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr/v4"
@@ -101,6 +102,64 @@ func (v *Interpreter) VisitVarDecl(ctx *parser.VarDeclContext) interface{} {
 		return nil
 	}
 	return nil
+}
+
+func (v *Interpreter) VisitIfStmt(ctx *parser.IfStmtContext) interface{} {
+	cond := ctx.Expr().Accept(v).(bool)
+	if cond {
+		ctx.Block(0).Accept(v)
+		return nil
+	}
+
+	if !cond && ctx.ELSE() != nil {
+		if ctx.IfStmt() != nil {
+			ctx.IfStmt().Accept(v)
+		} else {
+			ctx.Block(1).Accept(v)
+		}
+	}
+	return nil
+}
+
+func (v *Interpreter) VisitRelExpr(ctx *parser.RelExprContext) interface{} {
+	left := ctx.Expr(0).Accept(v)
+	right := ctx.Expr(1).Accept(v)
+	leftKind := reflect.TypeOf(left).Kind()
+	rightKind := reflect.TypeOf(right).Kind()
+
+	var res bool
+	var err error
+	if leftKind == reflect.Int && rightKind == reflect.Int {
+		res, err = evalRelExpr(left.(int), right.(int), ctx.GetRel_op())
+	} else if leftKind == reflect.String && rightKind == reflect.String {
+		res, err = evalRelExpr(left.(string), right.(string), ctx.GetRel_op())
+	} else {
+		err = fmt.Errorf("unexpected operands for relational op: %s and %s", leftKind, rightKind)
+	}
+
+	if err != nil {
+		panic(err)
+	}
+
+	return res
+
+}
+
+func evalRelExpr[T string | int](left, right T, op antlr.Token) (bool, error) {
+	var res bool
+	switch op.GetTokenType() {
+	case parser.OgaParserGREATER:
+		res = left > right
+	case parser.OgaParserLESS:
+		res = left < right
+	case parser.OgaParserEQUALS:
+		res = left == right
+	case parser.OgaParserNOT_EQUAL:
+		res = left != right
+	default:
+		return false, fmt.Errorf("unable to recognise operator: %v", op.GetText())
+	}
+	return res, nil
 }
 
 func (v *Interpreter) VisitAssignStmt(ctx *parser.AssignStmtContext) interface{} {
