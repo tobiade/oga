@@ -9,6 +9,7 @@ import (
 	"github.com/tobiade/oga/parser"
 )
 
+// TODO: Implement another mechanism for returning results from function?
 const RETURN = "return"
 
 type MemorySpace map[string]any
@@ -39,6 +40,16 @@ func (v *Interpreter) pop() MemorySpace {
 	return top
 }
 
+func (v *Interpreter) load(name string) any {
+	for i := len(v.Stack) - 1; i >= 0; i-- {
+		mem := v.Stack[i]
+		if res, ok := mem[name]; ok {
+			return res
+		}
+	}
+	return nil
+}
+
 func (v *Interpreter) Visit(tree antlr.ParseTree) interface{} {
 	return tree.Accept(v)
 }
@@ -55,7 +66,16 @@ func (v *Interpreter) VisitFuncDecl(ctx *parser.FuncDeclContext) interface{} {
 }
 
 func (v *Interpreter) VisitBlock(ctx *parser.BlockContext) interface{} {
-	return v.VisitChildren(ctx)
+	// Push a new instance of MemorySpace unto the stack if we're not invoking this from a function
+	_, parentIsFunction := ctx.GetParent().(*parser.FuncDeclContext)
+	if !parentIsFunction {
+		v.push(MemorySpace{})
+	}
+	v.VisitChildren(ctx)
+	if !parentIsFunction {
+		v.pop()
+	}
+	return nil
 }
 
 func (v *Interpreter) VisitStmtList(ctx *parser.StmtListContext) interface{} {
@@ -87,7 +107,7 @@ func (v *Interpreter) VisitIntExpr(ctx *parser.IntExprContext) interface{} {
 }
 
 func (v *Interpreter) VisitIDExpr(ctx *parser.IDExprContext) interface{} {
-	return v.top()[ctx.IDENTIFIER().GetText()]
+	return v.load(ctx.IDENTIFIER().GetText())
 }
 
 func (v *Interpreter) VisitStrExpr(ctx *parser.StrExprContext) interface{} {
@@ -184,7 +204,7 @@ func (v *Interpreter) VisitFuncCall(ctx *parser.FuncCallContext) interface{} {
 			mem[p.Name()] = exprResults[idx]
 		}
 	}
-	v.Stack = append(v.Stack, mem)
+	v.push(mem)
 	sym.Node.Accept(v)
 	// Pop return value
 	r := v.pop()
