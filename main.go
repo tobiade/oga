@@ -12,10 +12,8 @@ func main() {
 	code := `funke mehn(){
 
 		make x = doIt(2)*doIt(2)
-		suppose say x big pass 100 {
-			suppose say x big pass 10 {
-				make x = 1
-			}
+		suppose say x big pass 1000 or x big pass 10 {
+			x = 5
 		}
 		
 	}

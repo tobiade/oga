@@ -40,14 +40,28 @@ func (v *Interpreter) pop() MemorySpace {
 	return top
 }
 
-func (v *Interpreter) load(name string) any {
+func (v *Interpreter) findMemorySpace(name string) MemorySpace {
 	for i := len(v.Stack) - 1; i >= 0; i-- {
 		mem := v.Stack[i]
-		if res, ok := mem[name]; ok {
-			return res
+		if _, ok := mem[name]; ok {
+			return mem
 		}
 	}
 	return nil
+}
+
+func (v *Interpreter) load(name string) any {
+	mem := v.findMemorySpace(name)
+	return mem[name]
+}
+
+func (v *Interpreter) set(name string, val any) {
+	mem := v.findMemorySpace(name)
+	mem[name] = val
+}
+
+func (v *Interpreter) detonate(errMsg string, ctx antlr.ParserRuleContext) {
+	panic(fmt.Errorf("%s: line %d, col %d", errMsg, ctx.GetStart().GetLine(), ctx.GetStart().GetColumn()))
 }
 
 func (v *Interpreter) Visit(tree antlr.ParseTree) interface{} {
@@ -141,6 +155,28 @@ func (v *Interpreter) VisitIfStmt(ctx *parser.IfStmtContext) interface{} {
 	return nil
 }
 
+func (v *Interpreter) VisitLogicalExpr(ctx *parser.LogicalExprContext) interface{} {
+	left, leftOk := ctx.Expr(0).Accept(v).(bool)
+	right, rightOk := ctx.Expr(1).Accept(v).(bool)
+	if !leftOk {
+		v.detonate("non-boolean operands present: line %d, col %d", ctx.Expr(0))
+	}
+	if !rightOk {
+		v.detonate("non-boolean operands present: line %d, col %d", ctx.Expr(1))
+	}
+
+	var res bool
+	switch ctx.GetLogical_op().GetTokenType() {
+	case parser.OgaParserAND:
+		res = left && right
+	case parser.OgaParserOR:
+		res = left || right
+	default:
+		panic(fmt.Errorf("unrecognised logical operator: %v", ctx.GetLogical_op().GetText()))
+	}
+	return res
+}
+
 func (v *Interpreter) VisitRelExpr(ctx *parser.RelExprContext) interface{} {
 	left := ctx.Expr(0).Accept(v)
 	right := ctx.Expr(1).Accept(v)
@@ -183,7 +219,7 @@ func evalRelExpr[T string | int](left, right T, op antlr.Token) (bool, error) {
 }
 
 func (v *Interpreter) VisitAssignStmt(ctx *parser.AssignStmtContext) interface{} {
-	v.top()[ctx.IDENTIFIER().GetText()] = ctx.Expr().Accept(v)
+	v.set(ctx.IDENTIFIER().GetText(), ctx.Expr().Accept(v))
 	return nil
 }
 
@@ -205,6 +241,7 @@ func (v *Interpreter) VisitFuncCall(ctx *parser.FuncCallContext) interface{} {
 		}
 	}
 	v.push(mem)
+	// Call function
 	sym.Node.Accept(v)
 	// Pop return value
 	r := v.pop()
