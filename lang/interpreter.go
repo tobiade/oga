@@ -258,6 +258,10 @@ func (v *Interpreter) VisitExprList(ctx *parser.ExprListContext) interface{} {
 	return res
 }
 
+func (v *Interpreter) VisitNestedExpr(ctx *parser.NestedExprContext) interface{} {
+	return ctx.Expr().Accept(v)
+}
+
 func (v *Interpreter) doMath(ctx MathExprContext) int {
 	left := ctx.Expr(0).Accept(v).(int)
 	right := ctx.Expr(1).Accept(v).(int)

@@ -13,12 +13,12 @@ func main() {
 
 		make x = doIt(2)*doIt(2)
 		suppose say x big pass 1000 or x big pass 10 {
-			x = 5
+			x = doIt(6)
 		}
 		
 	}
 	funke doIt(num) {
-		make x = num*10
+		make x = (num*(5+5)) + 2 + (num*2)
 		dapada x
 	}
 	`

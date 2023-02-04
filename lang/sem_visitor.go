@@ -166,7 +166,7 @@ func (v *ScopeDefineVisitor) VisitAddSubExpr(ctx *parser.AddSubExprContext) inte
 
 func (v *ScopeDefineVisitor) VisitAssignStmt(ctx *parser.AssignStmtContext) interface{} {
 	v.NodeMetadata[ctx] = &Metadata{scope: v.CurrentScope}
-	return nil
+	return ctx.Expr().Accept(v)
 }
 
 // ScopeResVisitor resolves symbols that might have beeen defined by ScopeDefineVistor
@@ -206,7 +206,7 @@ func (v *ScopeResVisitor) VisitAssignStmt(ctx *parser.AssignStmtContext) interfa
 		return nil
 	}
 	m.symbol = sym
-	return nil
+	return ctx.Expr().Accept(v)
 }
 
 func (v *ScopeResVisitor) VisitFuncCall(ctx *parser.FuncCallContext) interface{} {
