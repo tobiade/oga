@@ -45,9 +45,11 @@ func (v *ScopeDefineVisitor) VisitVarDecl(ctx *parser.VarDeclContext) interface{
 }
 
 func (v *ScopeDefineVisitor) VisitFuncDecl(ctx *parser.FuncDeclContext) interface{} {
-	funSym := &FuncSymbol{
-		FuncName: ctx.IDENTIFIER().GetText(),
-		Node:     ctx,
+	funSym := &UserFuncSymbol{
+		FuncSymbolBase: FuncSymbolBase{
+			FuncName: ctx.IDENTIFIER().GetText(),
+		},
+		Node: ctx,
 	}
 	v.CurrentScope.Define(funSym)
 	funcScope := NewDefaultScope(funSym.FuncName, v.CurrentScope)
@@ -55,7 +57,7 @@ func (v *ScopeDefineVisitor) VisitFuncDecl(ctx *parser.FuncDeclContext) interfac
 
 	if ctx.IdentifierList() != nil {
 		symbols := ctx.IdentifierList().Accept(v).([]*VarSymbol)
-		funSym.Params = symbols
+		funSym.FuncParams = symbols
 	}
 
 	ctx.Block().Accept(v)

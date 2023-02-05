@@ -28,6 +28,12 @@ type Symbol interface {
 	Type() Type
 }
 
+type FuncSymbol interface {
+	Symbol
+	Params() []*VarSymbol
+	Call(v antlr.ParseTreeVisitor, args []any)
+}
+
 type VarSymbol struct {
 	VarName string
 	VarType Type
@@ -42,19 +48,39 @@ func (v *VarSymbol) Type() Type {
 	return v.VarType
 }
 
-type FuncSymbol struct {
-	FuncName string
-	FuncType Type
-	Params   []*VarSymbol
-	Node     antlr.ParseTree
+type FuncSymbolBase struct {
+	FuncName   string
+	FuncType   Type
+	FuncParams []*VarSymbol
 }
 
-func (v *FuncSymbol) Name() string {
-	return v.FuncName
+func (f *FuncSymbolBase) Name() string {
+	return f.FuncName
 }
 
-func (v *FuncSymbol) Type() Type {
-	return v.FuncType
+func (f *FuncSymbolBase) Type() Type {
+	return f.FuncType
+}
+
+func (f *FuncSymbolBase) Params() []*VarSymbol {
+	return f.FuncParams
+}
+
+type UserFuncSymbol struct {
+	FuncSymbolBase
+	Node antlr.ParseTree
+}
+
+func (f *UserFuncSymbol) Call(v antlr.ParseTreeVisitor, _ []any) {
+	f.Node.Accept(v)
+}
+
+type PrintFunc struct {
+	FuncSymbolBase
+}
+
+func (f *PrintFunc) Call(_ antlr.ParseTreeVisitor, args []any) {
+	fmt.Println(args...)
 }
 
 type Scope interface {

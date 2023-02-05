@@ -12,9 +12,7 @@ func main() {
 	code := `funke mehn(){
 
 		make x = doIt(2)*doIt(2)
-		suppose say x big pass 1000 or x big pass 10 {
-			x = doIt(6)
-		}
+		print(x)
 		
 	}
 	funke doIt(num) {
@@ -30,6 +28,7 @@ func main() {
 	tree := p.SourceFile()
 
 	global := lang.NewDefaultScope("global", nil)
+	defineNativeFunctions(&global)
 	defV := lang.ScopeDefineVisitor{
 		BaseOgaVisitor: &parser.BaseOgaVisitor{},
 		CurrentScope:   &global,
@@ -56,6 +55,16 @@ func main() {
 	}
 
 	defV.MainFunc.Accept(interpreter)
-	fmt.Println(interpreter.Stack[0])
+	if len(interpreter.Stack) > 0 {
+		fmt.Println(interpreter.Stack[0])
+	}
+}
 
+func defineNativeFunctions(scope lang.Scope) {
+	print := &lang.PrintFunc{
+		FuncSymbolBase: lang.FuncSymbolBase{
+			FuncName: "print",
+		},
+	}
+	scope.Define(print)
 }

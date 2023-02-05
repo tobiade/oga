@@ -233,16 +233,17 @@ func (v *Interpreter) VisitReturnStmt(ctx *parser.ReturnStmtContext) interface{}
 
 func (v *Interpreter) VisitFuncCall(ctx *parser.FuncCallContext) interface{} {
 	mem := MemorySpace{}
-	sym := v.NodeMetadata[ctx].symbol.(*FuncSymbol)
+	sym := v.NodeMetadata[ctx].symbol.(FuncSymbol)
+	var exprResults []any
 	if ctx.ExprList() != nil {
-		exprResults := ctx.ExprList().Accept(v).([]any)
-		for idx, p := range sym.Params {
+		exprResults = ctx.ExprList().Accept(v).([]any)
+		for idx, p := range sym.Params() {
 			mem[p.Name()] = exprResults[idx]
 		}
 	}
 	v.push(mem)
 	// Call function
-	sym.Node.Accept(v)
+	sym.Call(v, exprResults)
 	// Pop return value
 	r := v.pop()
 	// Pop stack frame for function
