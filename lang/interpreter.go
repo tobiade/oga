@@ -12,6 +12,14 @@ import (
 // TODO: Implement another mechanism for returning results from function?
 const RETURN = "return"
 
+type ReturnError struct {
+	val any
+}
+
+func (e *ReturnError) Error() string {
+	return fmt.Sprint(e.val)
+}
+
 type MemorySpace map[string]any
 
 type Interpreter struct {
@@ -225,10 +233,7 @@ func (v *Interpreter) VisitAssignStmt(ctx *parser.AssignStmtContext) interface{}
 
 func (v *Interpreter) VisitReturnStmt(ctx *parser.ReturnStmtContext) interface{} {
 	ret := ctx.Expr().Accept(v)
-	mem := MemorySpace{}
-	mem[RETURN] = ret
-	v.push(mem)
-	return ret
+	panic(&ReturnError{val: ret})
 }
 
 func (v *Interpreter) VisitFuncCall(ctx *parser.FuncCallContext) interface{} {
@@ -243,12 +248,10 @@ func (v *Interpreter) VisitFuncCall(ctx *parser.FuncCallContext) interface{} {
 	}
 	v.push(mem)
 	// Call function
-	sym.Call(v, exprResults)
-	// Pop return value
-	r := v.pop()
+	r := sym.Call(v, exprResults)
 	// Pop stack frame for function
 	v.pop()
-	return r[RETURN]
+	return r.val
 }
 
 func (v *Interpreter) VisitExprList(ctx *parser.ExprListContext) interface{} {

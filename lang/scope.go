@@ -18,6 +18,11 @@ const (
 
 const MAIN = "mehn"
 
+// Holds a return value for a function call. Need this so we can catch and return the value from a panic
+type Return struct {
+	val any
+}
+
 type Metadata struct {
 	scope  Scope
 	symbol Symbol
@@ -31,7 +36,7 @@ type Symbol interface {
 type FuncSymbol interface {
 	Symbol
 	Params() []*VarSymbol
-	Call(v antlr.ParseTreeVisitor, args []any)
+	Call(v antlr.ParseTreeVisitor, args []any) Return
 }
 
 type VarSymbol struct {
@@ -71,16 +76,30 @@ type UserFuncSymbol struct {
 	Node antlr.ParseTree
 }
 
-func (f *UserFuncSymbol) Call(v antlr.ParseTreeVisitor, _ []any) {
+func (f *UserFuncSymbol) Call(v antlr.ParseTreeVisitor, _ []any) (ret Return) {
+	defer CatchReturn(&ret)
 	f.Node.Accept(v)
+	return Return{}
 }
 
 type PrintFunc struct {
 	FuncSymbolBase
 }
 
-func (f *PrintFunc) Call(_ antlr.ParseTreeVisitor, args []any) {
+func (f *PrintFunc) Call(_ antlr.ParseTreeVisitor, args []any) (ret Return) {
 	fmt.Println(args...)
+	return Return{}
+}
+
+func CatchReturn(ret *Return) {
+	if r := recover(); r != nil {
+		switch v := r.(type) {
+		case *ReturnError:
+			ret.val = v.val
+		default:
+			panic("continue panic") // TODO: verify what the error logs look like in this case
+		}
+	}
 }
 
 type Scope interface {
