@@ -38,6 +38,9 @@ type OgaVisitor interface {
 	// Visit a parse tree produced by OgaParser#assignStmt.
 	VisitAssignStmt(ctx *AssignStmtContext) interface{}
 
+	// Visit a parse tree produced by OgaParser#simpleStmt.
+	VisitSimpleStmt(ctx *SimpleStmtContext) interface{}
+
 	// Visit a parse tree produced by OgaParser#forStmt.
 	VisitForStmt(ctx *ForStmtContext) interface{}
 

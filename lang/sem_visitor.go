@@ -97,11 +97,26 @@ func (v *ScopeDefineVisitor) VisitIfStmt(ctx *parser.IfStmtContext) interface{} 
 	return nil
 }
 
+func (v *ScopeDefineVisitor) VisitSimpleStmt(ctx *parser.SimpleStmtContext) interface{} {
+	if ctx.VarDecl() != nil {
+		ctx.VarDecl().Accept(v)
+	} else if ctx.AssignStmt() != nil {
+		ctx.AssignStmt().Accept(v)
+	}
+	return nil
+}
+
 func (v *ScopeDefineVisitor) VisitForStmt(ctx *parser.ForStmtContext) interface{} {
 	forScope := NewDefaultScope("for-scope", v.CurrentScope)
 	v.CurrentScope = &forScope
-	if ctx.VarDecl() != nil {
-		ctx.VarDecl().Accept(v)
+	if ctx.GetInitStmt() != nil {
+		ctx.GetInitStmt().Accept(v)
+	}
+	if ctx.Expr() != nil {
+		ctx.Expr().Accept(v)
+	}
+	if ctx.GetPostStmt() != nil {
+		ctx.GetPostStmt().Accept(v)
 	}
 	ctx.Block().Accept(v)
 	v.CurrentScope = forScope.EnclosingScope()
@@ -262,6 +277,10 @@ func (v *ScopeResVisitor) VisitReturnStmt(ctx *parser.ReturnStmtContext) interfa
 }
 
 func (v *ScopeResVisitor) VisitForStmt(ctx *parser.ForStmtContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *ScopeResVisitor) VisitSimpleStmt(ctx *parser.SimpleStmtContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 

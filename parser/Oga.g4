@@ -26,8 +26,12 @@ returnStmt: RETURN expr;
 
 assignStmt: IDENTIFIER ASSIGN expr;
 
+simpleStmt: varDecl | assignStmt;
+
 forStmt:
-	FOR ((varDecl | assignStmt)? SEMI expr? SEMI assignStmt?)? block;
+	FOR (
+		initStmt = simpleStmt? SEMI expr? SEMI postStmt = assignStmt?
+	)? block;
 
 expressionStmt: expr;
 

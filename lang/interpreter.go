@@ -284,3 +284,37 @@ func (v *Interpreter) doMath(ctx MathExprContext) int {
 	}
 	return res
 }
+
+func (v *Interpreter) VisitSimpleStmt(ctx *parser.SimpleStmtContext) interface{} {
+	if ctx.VarDecl() != nil {
+		ctx.VarDecl().Accept(v)
+	} else if ctx.AssignStmt() != nil {
+		ctx.AssignStmt().Accept(v)
+	}
+	return nil
+}
+
+func (v *Interpreter) VisitForStmt(ctx *parser.ForStmtContext) interface{} {
+	mem := MemorySpace{}
+	v.push(mem)
+	if ctx.GetInitStmt() != nil {
+		ctx.GetInitStmt().Accept(v)
+	}
+	var cond bool = true
+	if ctx.Expr() != nil {
+		cond = ctx.Expr().Accept(v).(bool)
+	}
+
+	for cond {
+		ctx.Block().Accept(v)
+		if ctx.GetPostStmt() != nil {
+			ctx.GetPostStmt().Accept(v)
+		}
+		if ctx.Expr() != nil {
+			cond = ctx.Expr().Accept(v).(bool)
+		}
+	}
+
+	v.pop()
+	return nil
+}

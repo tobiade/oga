@@ -48,6 +48,10 @@ func (v *BaseOgaVisitor) VisitAssignStmt(ctx *AssignStmtContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
+func (v *BaseOgaVisitor) VisitSimpleStmt(ctx *SimpleStmtContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BaseOgaVisitor) VisitForStmt(ctx *ForStmtContext) interface{} {
 	return v.VisitChildren(ctx)
 }

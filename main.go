@@ -11,8 +11,10 @@ import (
 func main() {
 	code := `funke mehn(){
 
-		make x = doIt(2)*doIt(2)
-		print(x)
+		make x = doIt(2)
+		dey play make y = 0; y small pass 5; y = y + 1 {
+			print(y)
+		}
 		
 	}
 	funke doIt(num) {
