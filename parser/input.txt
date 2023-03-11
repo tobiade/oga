@@ -1,7 +1,7 @@
 funke mehn(){
 	make x = doIt()*doIt()
 	print(x)
-	print("omooooo")
+	print("tins\ndey\noccur")
 		
 }
 

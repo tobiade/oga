@@ -133,7 +133,11 @@ func (v *Interpreter) VisitIDExpr(ctx *parser.IDExprContext) interface{} {
 }
 
 func (v *Interpreter) VisitStrExpr(ctx *parser.StrExprContext) interface{} {
-	return ctx.STR().GetText()
+	s, err := strconv.Unquote(ctx.STR().GetText())
+	if err != nil {
+		panic(fmt.Sprintf("unable to interpret string: %s", ctx.STR().GetText()))
+	}
+	return s
 }
 
 func (v *Interpreter) VisitVarDecl(ctx *parser.VarDeclContext) interface{} {
