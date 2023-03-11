@@ -12,8 +12,16 @@ var runCmd = &cobra.Command{
 	RunE:  Run,
 }
 
+func init() {
+	runCmd.Flags().Bool("pls", false, "force oga to run your code")
+}
+
 func Run(cmd *cobra.Command, args []string) error {
+	forceRun, err := cmd.Flags().GetBool("pls")
+	if err != nil {
+		return err
+	}
 	p := lang.NewDefaultSourceProvider(args[0])
-	lang.RunSourceCode(p)
+	lang.RunSourceCode(p, forceRun)
 	return nil
 }
