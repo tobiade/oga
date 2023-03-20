@@ -17,3 +17,6 @@
 # VSCode
 .vscode
 .antlr
+
+dist/
+.DS_Store
