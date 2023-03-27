@@ -26,10 +26,22 @@ func RunSourceCode(provider SourceProvider, forceRun bool) {
 	}
 	input := antlr.NewInputStream(source)
 	lexer := parser.NewOgaLexer(input)
+	errListener := &OgaErrorListener{Errors: make([]error, 0)}
+	lexer.RemoveErrorListeners()
+	lexer.AddErrorListener(errListener)
 	stream := antlr.NewCommonTokenStream(lexer, 0)
 	p := parser.NewOgaParser(stream)
+	p.RemoveErrorListeners()
+	p.AddErrorListener(errListener)
 	p.BuildParseTrees = true
 	tree := p.SourceFile()
+
+	if errListener.HasErrors() {
+		for _, e := range errListener.Errors {
+			fmt.Println(e)
+		}
+		return
+	}
 
 	global := NewDefaultScope("global", nil)
 	defineNativeFunctions(&global)
