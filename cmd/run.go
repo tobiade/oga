@@ -6,10 +6,11 @@ import (
 )
 
 var runCmd = &cobra.Command{
-	Use:   "run",
-	Short: "Run oga source code",
-	Args:  cobra.ExactArgs(1),
-	RunE:  Run,
+	Use:          "run",
+	Short:        "Run oga source code",
+	Args:         cobra.ExactArgs(1),
+	RunE:         Run,
+	SilenceUsage: true,
 }
 
 func init() {
@@ -22,6 +23,5 @@ func Run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	p := lang.NewDefaultSourceProvider(args[0])
-	lang.RunSourceCode(p, forceRun)
-	return nil
+	return lang.RunSourceCode(p, forceRun)
 }

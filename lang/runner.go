@@ -1,6 +1,7 @@
 package lang
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 
@@ -10,19 +11,17 @@ import (
 
 // RunSource code takes a provider which provides the source code, and a forceRun flag which forces oga to run the code.
 // By default, oga will flip a coin before running code. If it's heads oga will run it.
-func RunSourceCode(provider SourceProvider, forceRun bool) {
+func RunSourceCode(provider SourceProvider, forceRun bool) error {
 	if !forceRun {
 		// 0 is heads, 1 is tails
 		if face := flipCoin(); face == 1 {
-			fmt.Println("You dey mad")
-			return
+			return fmt.Errorf("You dey mad")
 		}
 	}
 
 	source, err := provider.Get()
 	if err != nil {
-		fmt.Println(err)
-		return
+		return err
 	}
 	input := antlr.NewInputStream(source)
 	lexer := parser.NewOgaLexer(input)
@@ -37,10 +36,7 @@ func RunSourceCode(provider SourceProvider, forceRun bool) {
 	tree := p.SourceFile()
 
 	if errListener.HasErrors() {
-		for _, e := range errListener.Errors {
-			fmt.Println(e)
-		}
-		return
+		return errors.Join(errListener.Errors...)
 	}
 
 	global := NewDefaultScope("global", nil)
@@ -58,8 +54,8 @@ func RunSourceCode(provider SourceProvider, forceRun bool) {
 		Errors:         make([]error, 0),
 	}
 	resV.Visit(tree)
-	for _, e := range resV.Errors {
-		fmt.Println(e)
+	if len(resV.Errors) > 0 {
+		return errors.Join(resV.Errors...)
 	}
 
 	globalMem := MemorySpace{}
@@ -71,6 +67,8 @@ func RunSourceCode(provider SourceProvider, forceRun bool) {
 	}
 
 	defV.MainFunc.Accept(interpreter)
+
+	return nil
 }
 
 func defineNativeFunctions(scope Scope) {
