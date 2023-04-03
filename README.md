@@ -17,7 +17,7 @@ go install github.com/tobiade/oga@latest
 ```
 
 ## Installing the Oga Visual Studio Code Extension
-You can search the VS Code extensions marketplace for "Oga" to install the latest version of [Oga VS Code extension](https://github.com/tobiade/oga-vscode) which currently only provides syntax highlighting:
+You can search the VS Code extensions marketplace for "Oga" to install the latest version of the [Oga VS Code extension](https://github.com/tobiade/oga-vscode) which currently only provides syntax highlighting:
 ![oga-vscode-extension](docs/oga-vscode-extension.png)
 
 ## Using Oga
