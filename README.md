@@ -31,3 +31,10 @@ oga abeg run my_script.og --pls
 
 ## Testing?
 Testimony.
+
+## Credits
+* [Yorlang](https://github.com/anoniscoding/yorlang)
+* [ANTLR grammars](https://github.com/antlr/grammars-v4)
+* [Ruslan](https://ruslanspivak.com/lsbasi-part1/)
+* [Language Implementation Patterns](https://pragprog.com/titles/tpdsl/language-implementation-patterns/)
+* [Crafting Interpreters](https://craftinginterpreters.com/)
