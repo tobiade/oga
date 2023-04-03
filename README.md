@@ -17,16 +17,16 @@ go install github.com/tobiade/oga@latest
 ```
 
 ## Using Oga
-Create your script e.g `my_script.oga`:
+Create your script e.g `my_script.og`:
 ![sample script](docs/ex1.png)
 
 To run your oga script:
 ```sh
-oga abeg run my_script.oga
+oga abeg run my_script.og
 ```
 However, there is no guarantee that oga will actually run your code. If you want to ensure your code is run, you have to beg by using the `pls` flag:
 ```sh
-oga abeg run my_script.oga --pls
+oga abeg run my_script.og --pls
 ```
 
 ## Testing?
