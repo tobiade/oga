@@ -16,6 +16,10 @@ Alternatively, if you have Go installed, you can install the latest version of o
 go install github.com/tobiade/oga@latest
 ```
 
+## Installing the Oga Visual Studio Code Extension
+You can search the VS Code extensions marketplace for "Oga" to install the latest version of [Oga VS Code extension](https://github.com/tobiade/oga-vscode) which currently only provides syntax highlighting:
+![oga-vscode-extension](docs/oga-vscode-extension.png)
+
 ## Using Oga
 Create your script e.g `my_script.og`:
 ![sample script](docs/ex1.png)
