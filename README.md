@@ -20,6 +20,9 @@ go install github.com/tobiade/oga@latest
 You can search the VS Code extensions marketplace for "Oga" to install the latest version of the [Oga VS Code extension](https://github.com/tobiade/oga-vscode) which currently only provides syntax highlighting:
 ![oga-vscode-extension](docs/oga-vscode-extension.png)
 
+## Syntax
+![syntax](docs/syntax.png)
+
 ## Using Oga
 Create your script e.g `my_script.og`:
 ![sample script](docs/ex1.png)
@@ -35,6 +38,9 @@ oga abeg run my_script.og --pls
 
 ## Testing?
 Testimony.
+
+## Oga is in Alpha
+Bugs dey.
 
 ## Credits
 * [Yorlang](https://github.com/anoniscoding/yorlang)

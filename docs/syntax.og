@@ -1,0 +1,31 @@
+// Variable declaration
+make x = 4
+make y = "hello"
+
+// Simple arithmetic
+make z = 4 * 3 + 1 - 9 + 10000
+
+// Control-flow + relational/logical operators
+suppose say messi big pass ronaldo and tinsDeyOccur big pass 0 {
+
+} otherwise suppose say dollar small pass naira or naira big pass sterling {
+
+} otherwise suppose say mashedPotato resemble iyan {
+
+} otherwise suppose say pikin no resemble inFada {
+
+} otherwise {
+
+}
+
+// For loops
+dey play make x = 0; x small pass 5; x = x + 1 {
+
+}
+
+// Functions
+funke nscdc() {
+    make msg = "it will be made known"
+    print(msg) // print is a built-in function provided by oga
+    dapada msg
+}
